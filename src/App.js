@@ -5,7 +5,16 @@ function App() {
 
   const [loading, setLoading] = useState(true)
   const [coins, setCoins] = useState([]);
+  const [value, setValue] = useState('');
 
+  const onChange = (event) => setValue(event.target.value);
+ 
+  const onSubmit = (event)=>{
+      event.preventDefault();
+      if (value==="") return;
+      setValue(event.target.value);
+      setValue("");
+  }
   useEffect(() => {
     fetch("https://api.coinpaprika.com/v1/tickers")
       .then((respone) => respone.json())
@@ -18,13 +27,22 @@ function App() {
   return (
     <div>
       <h1>The coins! {loading ? null : `(${coins.length})`} </h1>
-      {loading ? <strong>Loading...</strong> : <ul>
-        {coins.map((coin) =>
-          <li>{coin.name} ({coin.symbol}): {coin.quotes.USD.price} USD</li>
-        )}
-      </ul>}
+      <form onSubmit={onSubmit}>
 
+        <input onChange={onChange} value={value} type="number"
+          placeholder="How much do you have?" />
 
+        <button>SEARCH</button>
+        
+        {loading ? <strong>Loading...</strong> :
+          <ul>
+            {coins.map((coin) =>
+              <li>{coin.name} ({coin.symbol}):{coin.quotes.USD.price} USD</li>)
+            }
+          </ul>
+        }
+
+      </form>
     </div>
   );
 }
